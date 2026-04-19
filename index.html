@@ -9,13 +9,17 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { margin: 0; background-color: #f3f4f6; font-family: sans-serif; }
+        #root { display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+    </style>
 </head>
 <body>
     <div id="root"></div>
     <script type="text/babel">
         const { Home, User, Clock, DollarSign, ShieldAlert, Download, FileSpreadsheet, Lock, Unlock, ChevronRight, Settings, Bell, Calendar, FileText } = lucide;
 
-        function App() {
+        const App = () => {
             const [activeTab, setActiveTab] = React.useState('home');
             const [isPayslipUnlocked, setIsPayslipUnlocked] = React.useState(false);
             const [pin, setPin] = React.useState('');
@@ -25,114 +29,106 @@
                 if (pin.length === 4) setIsPayslipUnlocked(true);
             };
 
-            const renderHeader = () => (
-                <div className="bg-[#0078D4] text-white p-4 flex justify-between items-center shadow-md">
-                    <div className="font-bold text-lg tracking-wide">HR NEXUS 365</div>
-                    <Bell size={20} />
-                </div>
-            );
-
-            const renderBottomNav = () => (
-                <div className="bg-white border-t flex justify-between items-center px-6 py-3 text-gray-500 text-[10px] shadow-[0_-2px_10px_rgba(0,0,0,0.05)] pb-8">
-                    <div className={`flex flex-col items-center gap-1 cursor-pointer ${activeTab === 'home' ? 'text-[#0078D4]' : ''}`} onClick={() => setActiveTab('home')}>
-                        <Home size={22} /><span>Home</span>
-                    </div>
-                    <div className={`flex flex-col items-center gap-1 cursor-pointer ${activeTab === 'time' ? 'text-[#0078D4]' : ''}`} onClick={() => setActiveTab('time')}>
-                        <Clock size={22} /><span>Time</span>
-                    </div>
-                    <div className={`flex flex-col items-center gap-1 cursor-pointer ${activeTab === 'payroll' ? 'text-[#0078D4]' : ''}`} onClick={() => {setActiveTab('payroll'); setIsPayslipUnlocked(false); setPin('');}}>
-                        <DollarSign size={22} /><span>Payroll</span>
-                    </div>
-                    <div className={`flex flex-col items-center gap-1 cursor-pointer ${activeTab === 'profile' ? 'text-[#0078D4]' : ''}`} onClick={() => setActiveTab('profile')}>
-                        <User size={22} /><span>Profile</span>
-                    </div>
-                    <div className={`flex flex-col items-center gap-1 cursor-pointer ${activeTab === 'admin' ? 'text-[#0078D4]' : ''}`} onClick={() => setActiveTab('admin')}>
-                        <Settings size={22} /><span>Admin</span>
-                    </div>
-                </div>
-            );
-
-            const renderHome = () => (
-                <div className="p-4 flex-1 overflow-y-auto bg-gray-50">
-                    <div className="mb-6">
-                        <h2 className="text-xl font-bold text-gray-800">Good morning, Justin!</h2>
-                        <p className="text-sm text-gray-500">Sunday, April 19, 2026</p>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4 mb-6">
-                        <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center">
-                            <span className="text-3xl font-bold text-[#0078D4]">5</span>
-                            <span className="text-[10px] text-gray-400 uppercase font-semibold mt-1">Leave Days</span>
-                        </div>
-                        <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center">
-                            <span className="text-3xl font-bold text-[#107C10]">12.5</span>
-                            <span className="text-[10px] text-gray-400 uppercase font-semibold mt-1">OT Hours</span>
-                        </div>
-                    </div>
-                    <h3 className="font-bold text-gray-800 mb-3">Quick Actions</h3>
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
-                        <div className="p-4 border-b flex items-center justify-between" onClick={() => setActiveTab('time')}>
-                            <div className="flex items-center gap-3"><div className="p-2 bg-blue-50 rounded-lg text-[#0078D4]"><Calendar size={18} /></div><span className="text-sm">Submit Leave</span></div>
-                            <ChevronRight size={14} className="text-gray-300" />
-                        </div>
-                        <div className="p-4 flex items-center justify-between" onClick={() => setActiveTab('time')}>
-                            <div className="flex items-center gap-3"><div className="p-2 bg-green-50 rounded-lg text-[#107C10]"><Clock size={18} /></div><span className="text-sm">Register OT</span></div>
-                            <ChevronRight size={14} className="text-gray-300" />
-                        </div>
-                    </div>
-                </div>
-            );
-
-            const renderPayroll = () => (
-                !isPayslipUnlocked ? (
-                    <div className="flex-1 flex flex-col items-center justify-center p-6 bg-gray-50">
-                        <div className="w-16 h-16 bg-blue-100 text-[#0078D4] rounded-full flex items-center justify-center mb-6"><ShieldAlert size={32} /></div>
-                        <h2 className="text-xl font-bold mb-2">Secure Payslip</h2>
-                        <p className="text-center text-gray-500 text-xs mb-8">Enter 4-digit PIN to unlock</p>
-                        <form onSubmit={handlePinSubmit} className="w-full max-w-xs text-center">
-                            <input type="password" maxLength="4" value={pin} onChange={(e) => setPin(e.target.value)} className="w-2/3 border-2 border-gray-300 rounded-xl p-3 text-center text-2xl mb-6 outline-none focus:border-[#0078D4]" placeholder="••••"/>
-                            <button type="submit" className={`w-full py-3 rounded-lg font-bold text-white ${pin.length === 4 ? 'bg-[#0078D4]' : 'bg-gray-300'}`}>Unlock</button>
-                        </form>
-                    </div>
-                ) : (
-                    <div className="flex-1 overflow-y-auto bg-gray-50 p-4">
-                        <div className="bg-[#0078D4] text-white p-6 rounded-2xl shadow-lg mb-6">
-                            <p className="text-xs opacity-80 mb-1">Net Pay (April)</p>
-                            <h1 className="text-3xl font-bold">$4,500.00</h1>
-                        </div>
-                        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 space-y-3">
-                            <div className="flex justify-between text-sm"><span>Basic Salary</span><span className="font-bold">$4,000.00</span></div>
-                            <div className="flex justify-between text-sm"><span>OT Pay</span><span className="font-bold">$500.00</span></div>
-                            <div className="flex justify-between text-sm border-t pt-2 text-red-500"><span>Tax/Ins</span><span className="font-bold">-$300.00</span></div>
-                        </div>
-                    </div>
-                )
-            );
-
-            const renderAdmin = () => (
-                <div className="flex-1 p-4 bg-gray-50">
-                    <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-xl mb-6 flex gap-3">
-                        <Lock className="text-yellow-600" size={20} />
-                        <div className="text-xs text-yellow-800"><b>Payroll Locked</b><br/>Cycle (Mar 21 - Apr 20) is frozen.</div>
-                    </div>
-                    <button className="w-full flex items-center justify-center gap-2 bg-[#107C10] text-white py-3 rounded-lg font-bold shadow-md">
-                        <FileSpreadsheet size={18} /> Export Smart Excel
-                    </button>
-                </div>
-            );
-
             return (
-                <div className="flex justify-center items-center h-screen bg-gray-100">
-                    <div className="w-[360px] h-[740px] bg-white shadow-2xl rounded-[32px] overflow-hidden flex flex-col border-[6px] border-gray-800 relative">
-                        {renderHeader()}
-                        {activeTab === 'home' && renderHome()}
-                        {activeTab === 'payroll' && renderPayroll()}
-                        {activeTab === 'admin' && renderAdmin()}
-                        {['time', 'profile'].includes(activeTab) && <div className="flex-1 flex items-center justify-center text-gray-400">Content Coming Soon</div>}
-                        {renderBottomNav()}
+                <div className="w-[360px] h-[740px] bg-white shadow-2xl rounded-[32px] overflow-hidden flex flex-col border-[6px] border-gray-800 relative scale-90 sm:scale-100">
+                    {/* Header */}
+                    <div className="bg-[#0078D4] text-white p-4 flex justify-between items-center shadow-md pt-8">
+                        <div className="font-bold text-lg tracking-wide">HR NEXUS 365</div>
+                        <Bell size={20} />
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 overflow-y-auto bg-gray-50 p-4">
+                        {activeTab === 'home' && (
+                            <div>
+                                <h2 className="text-xl font-bold text-gray-800">Good morning, Justin!</h2>
+                                <p className="text-sm text-gray-500 mb-6">Sunday, April 19, 2026</p>
+                                <div className="grid grid-cols-2 gap-4 mb-6">
+                                    <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center">
+                                        <span className="text-3xl font-bold text-[#0078D4]">5</span>
+                                        <span className="text-[10px] text-gray-400 uppercase font-semibold mt-1">Leave Days</span>
+                                    </div>
+                                    <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center">
+                                        <span className="text-3xl font-bold text-[#107C10]">12.5</span>
+                                        <span className="text-[10px] text-gray-400 uppercase font-semibold mt-1">OT Hours</span>
+                                    </div>
+                                </div>
+                                <h3 className="font-bold text-gray-800 mb-3 text-sm">QUICK ACTIONS</h3>
+                                <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                                    <div className="p-4 border-b flex items-center justify-between cursor-pointer active:bg-gray-100" onClick={() => setActiveTab('time')}>
+                                        <div className="flex items-center gap-3"><div className="p-2 bg-blue-50 rounded-lg text-[#0078D4]"><Calendar size={18} /></div><span className="text-sm">Submit Leave</span></div>
+                                        <ChevronRight size={14} className="text-gray-300" />
+                                    </div>
+                                    <div className="p-4 flex items-center justify-between cursor-pointer active:bg-gray-100" onClick={() => setActiveTab('time')}>
+                                        <div className="flex items-center gap-3"><div className="p-2 bg-green-50 rounded-lg text-[#107C10]"><Clock size={18} /></div><span className="text-sm">Register OT</span></div>
+                                        <ChevronRight size={14} className="text-gray-300" />
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'payroll' && (
+                            !isPayslipUnlocked ? (
+                                <div className="h-full flex flex-col items-center justify-center p-2 text-center">
+                                    <div className="w-16 h-16 bg-blue-100 text-[#0078D4] rounded-full flex items-center justify-center mb-6"><ShieldAlert size={32} /></div>
+                                    <h2 className="text-xl font-bold mb-2">Secure Payslip</h2>
+                                    <p className="text-gray-500 text-xs mb-8 italic">Enter any 4 digits to unlock demo</p>
+                                    <input type="password" maxLength="4" value={pin} onChange={(e) => setPin(e.target.value)} className="w-2/3 border-2 border-gray-300 rounded-xl p-3 text-center text-2xl mb-6 outline-none focus:border-[#0078D4]" placeholder="••••"/>
+                                    <button onClick={() => setIsPayslipUnlocked(pin.length === 4)} className={`w-full py-3 rounded-lg font-bold text-white ${pin.length === 4 ? 'bg-[#0078D4]' : 'bg-gray-300'}`}>Unlock</button>
+                                </div>
+                            ) : (
+                                <div>
+                                    <div className="bg-[#0078D4] text-white p-6 rounded-2xl shadow-lg mb-6">
+                                        <p className="text-xs opacity-80 mb-1">Net Pay (April)</p>
+                                        <h1 className="text-3xl font-bold">$4,500.00</h1>
+                                    </div>
+                                    <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 space-y-4">
+                                        <div className="flex justify-between text-sm"><span>Basic Salary</span><span className="font-bold">$4,000.00</span></div>
+                                        <div className="flex justify-between text-sm"><span>OT Pay</span><span className="font-bold">$500.00</span></div>
+                                        <div className="flex justify-between text-sm border-t pt-2 text-red-500 font-bold"><span>Total Deductions</span><span>-$300.00</span></div>
+                                    </div>
+                                </div>
+                            )
+                        )}
+
+                        {activeTab === 'admin' && (
+                            <div>
+                                <h3 className="font-bold text-gray-800 mb-4 text-sm uppercase">Admin Console</h3>
+                                <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-xl mb-6 flex gap-3">
+                                    <Lock className="text-yellow-600" size={20} />
+                                    <div className="text-xs text-yellow-800"><b>Payroll Locked</b><br/>Cycle (Mar 21 - Apr 20) is frozen.</div>
+                                </div>
+                                <button className="w-full flex items-center justify-center gap-2 bg-[#107C10] text-white py-4 rounded-xl font-bold shadow-md active:bg-green-800">
+                                    <FileSpreadsheet size={18} /> Export Smart Excel
+                                </button>
+                            </div>
+                        )}
+
+                        {(activeTab === 'time' || activeTab === 'profile') && (
+                             <div className="h-full flex items-center justify-center text-gray-400 italic text-sm text-center">
+                                Module "{activeTab.toUpperCase()}" is currently under development for Sprint 1.
+                             </div>
+                        )}
+                    </div>
+
+                    {/* Navigation */}
+                    <div className="bg-white border-t flex justify-between items-center px-6 py-3 text-gray-400 text-[10px] pb-8">
+                        <div className={`flex flex-col items-center gap-1 ${activeTab === 'home' ? 'text-[#0078D4]' : ''}`} onClick={() => setActiveTab('home')}>
+                            <Home size={22} /><span>Home</span>
+                        </div>
+                        <div className={`flex flex-col items-center gap-1 ${activeTab === 'time' ? 'text-[#0078D4]' : ''}`} onClick={() => setActiveTab('time')}>
+                            <Clock size={22} /><span>Time</span>
+                        </div>
+                        <div className={`flex flex-col items-center gap-1 ${activeTab === 'payroll' ? 'text-[#0078D4]' : ''}`} onClick={() => {setActiveTab('payroll'); setIsPayslipUnlocked(false); setPin('');}}>
+                            <DollarSign size={22} /><span>Payroll</span>
+                        </div>
+                        <div className={`flex flex-col items-center gap-1 ${activeTab === 'admin' ? 'text-[#0078D4]' : ''}`} onClick={() => setActiveTab('admin')}>
+                            <Settings size={22} /><span>Admin</span>
+                        </div>
                     </div>
                 </div>
             );
-        }
+        };
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
